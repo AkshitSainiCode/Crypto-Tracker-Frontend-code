@@ -26,6 +26,27 @@ body {
   flex: 1;
 }
 
+.info-banner {
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border: 2px solid #667eea;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.info-icon {
+  font-size: 24px;
+}
+
+.info-text {
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+}
+
 .controls {
   display: flex;
   align-items: center;

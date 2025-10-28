@@ -11,18 +11,41 @@ const api = axios.create({
   },
 });
 
-// Fetch live crypto data
+// Fetch crypto data - ALWAYS use database to avoid rate limits
 export const fetchCoins = async () => {
   try {
-    const response = await api.get('/coins');
+    // Use database endpoint instead of live API to avoid rate limits
+    const response = await api.get('/coins/current');
     return response.data;
   } catch (error) {
-    console.error('Error fetching coins:', error);
+    console.error('Error fetching coins from database:', error);
     throw error;
   }
 };
 
-// Fetch current data from database
+// Fetch live data from CoinGecko (use sparingly - only for manual refresh)
+export const fetchLiveCoins = async () => {
+  try {
+    const response = await api.get('/coins');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching live coins:', error);
+    
+    // Fallback to database if API fails
+    try {
+      const dbResponse = await api.get('/coins/current');
+      return {
+        ...dbResponse.data,
+        fromFallback: true,
+        message: 'Showing data from database (API temporarily unavailable)'
+      };
+    } catch (dbError) {
+      throw error;
+    }
+  }
+};
+
+// Fetch current data from database (direct access)
 export const fetchCurrentCoins = async () => {
   try {
     const response = await api.get('/coins/current');

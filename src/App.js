@@ -17,7 +17,7 @@ function App() {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
-  // Fetch cryptocurrency data
+  // Fetch cryptocurrency data from database (to avoid rate limits)
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
@@ -30,7 +30,7 @@ function App() {
         setLastUpdated(formatDateTime(new Date()));
       }
     } catch (err) {
-      setError('Failed to fetch cryptocurrency data. Please try again later.');
+      setError('Failed to fetch cryptocurrency data. Please check your connection.');
       console.error('Error:', err);
     } finally {
       setLoading(false);
@@ -42,9 +42,10 @@ function App() {
     fetchData();
   }, [fetchData]);
 
-  // Auto-refresh every 30 minutes
+  // Auto-refresh every 30 minutes from database (no rate limit issues)
   useEffect(() => {
     const interval = setInterval(() => {
+      console.log('Auto-refreshing data from database...');
       fetchData();
     }, 30 * 60 * 1000); // 30 minutes
 
@@ -91,6 +92,15 @@ function App() {
       <Header lastUpdated={lastUpdated} />
       
       <div className="container">
+        {/* Info Banner */}
+        <div className="info-banner">
+          <span className="info-icon">ℹ️</span>
+          <span className="info-text">
+            Data updates automatically every hour via scheduled job. 
+            Last database update: {lastUpdated || 'Loading...'}
+          </span>
+        </div>
+
         {error && (
           <div className="error-message">
             <p>{error}</p>
